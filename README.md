@@ -4,6 +4,12 @@ This is the backend for the Snip URL shortner project.
 
 # How to use
 
+In your MySQL, create a new database
+
+```mysql
+CREATE DATABASE snip;
+```
+
 Build a docker image
 
 ```bash
