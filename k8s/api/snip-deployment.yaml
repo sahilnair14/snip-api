@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snip-api
+  labels:
+    app: snip-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: snip-api
+  template:
+    metadata:
+      labels:
+        app: snip-api
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      serviceAccountName: mysql-service
+      containers:
+      - name: snip-api-container
+        image: k8sdemoregistory.azurecr.io/snip-api:v1
+        ports:
+        - containerPort: 8080
+
+        env:
+          - name: SPRING_DATASOURCE_URL
+            value: "jdbc:mysql://mysql:3306/snip?createDatabaseIfNotExist=true"
+          - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+            value: com.mysql.cj.jdbc.Driver
+          - name: SPRING_DATASOURCE_USERNAME
+            value: root
+          - name: SPRING_DATASOURCE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: root-password
+          - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+            value: update
+          - name: APP_CORS_ALLOWED_ORIGINS
+            value: "https://snip-ui.devopsmafia.live"

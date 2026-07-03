@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: snip-api-ingress
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/appgw-ssl-certificate: "devopsmafia-wildcard"
+    appgw.ingress.kubernetes.io/health-probe-path: "/api/v1/links"
+
+spec:
+  tls:
+  - hosts:
+    - snip-api.devopsmafia.live
+  rules:
+  - host: snip-api.devopsmafia.live
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: snip-api
+            port:
+              number: 8080
