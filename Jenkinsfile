@@ -95,6 +95,9 @@ pipeline {
             echo '===================================='
             echo 'BUILD & DEPLOY SUCCESSFUL!'
             echo '===================================='
+            echo 'TRIGGERING UI PIPELINE'
+            echo '===================================='
+            build job: 'snip-ui-pipeline', wait: false
         }
         failure {
             echo '===================================='
