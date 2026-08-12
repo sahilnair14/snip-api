@@ -29,7 +29,7 @@ pipeline {
         stage('Build for Sonar') {
             steps {
                 echo 'Compiling project before analysis...'
-                sh 'mvn clean compile'
+                sh './mvnw clean compile'
             }
         }
 
