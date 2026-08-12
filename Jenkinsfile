@@ -8,9 +8,9 @@ pipeline {
         // Customize these as per your project
         GIT_REPO      = 'https://github.com/sahilnair14/snip-api.git'
         GIT_BRANCH    = 'main'
-        IMAGE_NAME    = 'Snip-api'
+        IMAGE_NAME    = 'snip-api'
         IMAGE_TAG     = "${env.BUILD_NUMBER}"
-        CONTAINER_NAME = 'Snip-demo'
+        CONTAINER_NAME = 'snip-demo'
         APP_PORT      = '8080'
         HOST_PORT     = '8081'
     }
