@@ -39,7 +39,8 @@ pipeline {
                 sh '''
                     ${SCANNER_HOME}/bin/sonar-scanner \
                     -Dsonar.projectKey=sonarqube-project \
-                    -Dsonar.sources=.
+                    -Dsonar.sources=. \
+                    -Dsonar.java.binaries=target/classes
                 '''
             }
         }
