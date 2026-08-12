@@ -1,83 +1,63 @@
 pipeline {
-
     // Which Jenkins Agent should execute this pipeline?
     agent {
         label 'Tester'
     }
 
+    environment {
+        // Customize these as per your project
+        GIT_REPO      = 'https://github.com/sahilnair14/snip-api.git'
+        GIT_BRANCH    = 'main'
+        IMAGE_NAME    = 'Snip-api'
+        IMAGE_TAG     = "${env.BUILD_NUMBER}"
+        CONTAINER_NAME = 'Snip-demo'
+        APP_PORT      = '8080'
+        HOST_PORT     = '8081'
+    }
+
     stages {
-
-        stage('Checkout') {
+        stage('Git Clone') {
             steps {
-                echo 'Checking out source code...'
-
-                checkout scm
+                echo 'Cloning source code from Git...'
+                git branch: "${GIT_BRANCH}", url: "${GIT_REPO}"
+                // If using checkout scm (works when pipeline is loaded from SCM):
+                // checkout scm
             }
         }
 
-        stage('Environment Check') {
+        stage('Docker Build') {
             steps {
-                echo 'Checking environment...'
+                echo 'Building Docker image...'
+                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest"
+            }
+        }
 
+        stage('Docker Deploy') {
+            steps {
+                echo 'Deploying Docker container...'
                 sh '''
-                    echo "Hostname:"
-                    hostname
-
-                    echo "Current User:"
-                    whoami
-
-                    echo "Java Version:"
-                    java -version
-
-                    echo "Node Version:"
-                    node --version
-
-                    echo "NPM Version:"
-                    npm --version
+                    # Stop and remove existing container if running
+                    docker stop ${CONTAINER_NAME} || true
+                    docker rm ${CONTAINER_NAME} || true
                 '''
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                echo 'Installing dependencies...'
-
-                sh 'npm install'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-
-                sh 'npm test'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                echo 'Building application...'
-
-                sh 'npm run build'
+                sh "docker run -d --name ${CONTAINER_NAME} -p ${HOST_PORT}:${APP_PORT} ${IMAGE_NAME}:latest"
             }
         }
     }
 
     post {
-
         success {
             echo '===================================='
-            echo 'BUILD SUCCESSFUL!'
+            echo 'BUILD & DEPLOY SUCCESSFUL!'
             echo '===================================='
         }
-
         failure {
             echo '===================================='
             echo 'BUILD FAILED!'
             echo 'Check the console output.'
             echo '===================================='
         }
-
         always {
             echo 'Pipeline execution completed.'
         }
