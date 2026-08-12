@@ -26,6 +26,13 @@ pipeline {
             }
         }
 
+        stage('Build for Sonar') {
+            steps {
+                echo 'Compiling project before analysis...'
+                sh 'mvn clean compile'
+            }
+        }
+
         stage('SonarQube Analysis') {
         steps {
             withSonarQubeEnv('sonarqube') {
