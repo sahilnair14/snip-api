@@ -12,7 +12,7 @@ pipeline {
         IMAGE_TAG     = "${env.BUILD_NUMBER}"
         CONTAINER_NAME = 'snip-demo'
         APP_PORT      = '8080'
-        HOST_PORT     = '8081'
+        HOST_PORT     = '8082'
     }
 
     stages {
