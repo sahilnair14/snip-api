@@ -13,6 +13,7 @@ pipeline {
         CONTAINER_NAME = 'snip-demo'
         APP_PORT      = '8080'
         HOST_PORT     = '8082'
+        SCANNER_HOME = tool 'sonarscanner'
     }
 
     stages {
@@ -24,6 +25,18 @@ pipeline {
                 // checkout scm
             }
         }
+
+        stage('SonarQube Analysis') {
+        steps {
+            withSonarQubeEnv('sonarqube') {
+                sh '''
+                    ${SCANNER_HOME}/bin/sonar-scanner \
+                    -Dsonar.projectKey=sonarqube-project \
+                    -Dsonar.sources=.
+                '''
+            }
+        }
+    }
 
         stage('Docker Build') {
             steps {
