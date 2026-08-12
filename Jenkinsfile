@@ -13,7 +13,7 @@ pipeline {
         CONTAINER_NAME = 'snip-demo'
         APP_PORT      = '8080'
         HOST_PORT     = '8082'
-        SCANNER_HOME = tool 'sonarscanner'
+        SCANNER_HOME = tool 'sonarqube-scanner'
     }
 
     stages {
@@ -30,7 +30,7 @@ pipeline {
         steps {
             withSonarQubeEnv('sonarqube') {
                 sh '''
-                    ${SCANNER_HOME}/bin/sonar-scanner \
+                    ${SCANNER_HOME}/bin/sonarqube-scanner \
                     -Dsonar.projectKey=sonarqube-project \
                     -Dsonar.sources=.
                 '''
