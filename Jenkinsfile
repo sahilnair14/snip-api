@@ -64,14 +64,15 @@ pipeline {
                     aquasec/trivy:latest image \
                     --severity HIGH,CRITICAL \
                     --exit-code 0 \
-                    --format table \
-                    -o /report/trivy-report.txt \
+                    --format template \
+                    --template "@/contrib/html.tpl" \
+                    -o /report/trivy-report.html \
                     ${IMAGE_NAME}:${IMAGE_TAG}
                 """
             }
             post {
                 always {
-                    archiveArtifacts artifacts: 'trivy-report.txt', allowEmptyArchive: true
+                    archiveArtifacts artifacts: 'trivy-report.html', allowEmptyArchive: true
                 }
             }
         }
