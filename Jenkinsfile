@@ -54,6 +54,28 @@ pipeline {
             }
         }
 
+        stage('Trivy Scan') {
+            steps {
+                echo 'Scanning Docker image for vulnerabilities using Trivy container...'
+                sh """
+                    docker run --rm \
+                    -v /var/run/docker.sock:/var/run/docker.sock \
+                    -v \$(pwd):/report \
+                    aquasec/trivy:latest image \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 0 \
+                    --format table \
+                    -o /report/trivy-report.txt \
+                    ${IMAGE_NAME}:${IMAGE_TAG}
+                """
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'trivy-report.txt', allowEmptyArchive: true
+                }
+            }
+        }
+
         stage('Docker Deploy') {
             steps {
                 echo 'Deploying Docker container...'
